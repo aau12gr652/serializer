@@ -3,18 +3,21 @@
 #include <assert.h>
 #include <boost/signals2.hpp>
 
+#include <stdlib.h>
+
 class serializer
 {
-private:
-	std::vector<uint8_t> data;
 public:
-    boost::signals2::signal< void (uint8_t*, uint32_t)> signal_new_buffer;
+    std::vector<uint8_t> data;
+
+    boost::signals2::signal<void (uint8_t*, uint32_t)> signal_new_buffer;
 
     serializer(uint32_t size = 0);
     ~serializer();
 
-	void feed(uint8_t* ptr, uint32_t size);
+    uint32_t feed(uint8_t* ptr, uint32_t size);
     std::vector<uint8_t>& serialize();
     void deserialize_signal(std::vector<uint8_t>& data);
+    void reset(uint32_t capacity);
 };
 

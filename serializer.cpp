@@ -3,7 +3,6 @@
 serializer::serializer(uint32_t size)
 {
     if (size) data.reserve(size);
-    // Reserve at least size amount of bytes for the serialization vector (can be zero, if so, memory will be allocated "on-the-fly")
 }
 
 serializer::~serializer()
@@ -14,8 +13,13 @@ serializer::~serializer()
 // Feed a buffer to serializer. Serializer will append a CPOY of the buffer to end of the vector, and returns an index to the vector where the buffer ENDS.
 uint32_t serializer::feed(uint8_t *ptr, uint32_t size)
 {
-    data.insert(data.end(), &size, (&size)+sizeof(uint32_t));
+    uint8_t size_array[sizeof(uint32_t)];
+    memcpy(&size_array, &size, sizeof(uint32_t)); // BEWARE OF ENDIANESS!!!
+
+    data.insert(data.end(), size_array, size_array+sizeof(uint32_t));
+
     data.insert(data.end(), ptr, ptr+size);
+
     return data.size()-1;
 }
 
@@ -28,17 +32,26 @@ std::vector<uint8_t>& serializer::serialize()
 // deserialize function emits a signal with ptr to buffer, and length of respective buffer.
 void serializer::deserialize_signal(std::vector<uint8_t>& serialized_data)
 {
-    uint32_t length_of_next_buffer;
+    std::cout << "inside deserialize function \n";
+    uint32_t next_buffer_size;
     uint32_t index = 0;
-    uint32_t *integer_pointer;
     while(index < serialized_data.size()-1)
     {
-        integer_pointer = (uint32_t*) &serialized_data[index];
-        length_of_next_buffer = *integer_pointer;
+        std::cout << "inside loop\n";
+        memcpy(&next_buffer_size, &serialized_data[index],sizeof(uint32_t));
         // If next buffer is longer than remaining data in vector, an error has occured: break from loop.
-        if (length_of_next_buffer > serialized_data.size()-index) break;
+        std::cout << "length of next buffer is " << next_buffer_size;
+        if (next_buffer_size > serialized_data.size()-index) break;
         index += sizeof(uint32_t);
-        signal_new_buffer(&serialiazed_data[index], length_of_next_buffer);
-        index += length_of_next_buffer;
+        std::cout << "just before signal\n";
+        signal_new_buffer(&serialized_data[index], next_buffer_size);
+        std::cout << "just after signal\n";
+        index += next_buffer_size;
     }
+}
+
+void serializer::reset(uint32_t capacity)
+{
+    data.clear();
+    if (capacity) data.reserve(capacity);
 }
