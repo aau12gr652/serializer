@@ -10,17 +10,23 @@ serializer::~serializer()
     // Empty destructor
 }
 
+uint32_t serializer::size()
+{
+    return data.size();
+}
+
 // Feed a buffer to serializer. Serializer will append a CPOY of the buffer to end of the vector, and returns an index to the vector where the buffer ENDS.
 uint32_t serializer::feed(uint8_t *ptr, uint32_t size)
 {
     uint8_t size_array[sizeof(uint32_t)];
     memcpy(&size_array, &size, sizeof(uint32_t)); // BEWARE OF ENDIANESS!!!
 
+    uint32_t index = data.size();
     data.insert(data.end(), size_array, size_array+sizeof(uint32_t));
 
     data.insert(data.end(), ptr, ptr+size);
 
-    return data.size()-1;
+    return index;
 }
 
 std::vector<uint8_t>& serializer::serialize()

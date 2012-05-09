@@ -19,5 +19,6 @@ public:
     std::vector<uint8_t>& serialize();
     void deserialize_signal(std::vector<uint8_t>& data);
     void reset(uint32_t capacity);
+    uint32_t size();
 };
 
