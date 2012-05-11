@@ -38,21 +38,35 @@ std::vector<uint8_t>& serializer::serialize()
 // deserialize function emits a signal with ptr to buffer, and length of respective buffer.
 void serializer::deserialize_signal(std::vector<uint8_t>& serialized_data)
 {
-    std::cout << "inside deserialize function \n";
+//    std::cout << "inside deserialize function \n";
     uint32_t next_buffer_size;
     uint32_t index = 0;
     while(index < serialized_data.size()-1)
     {
-        std::cout << "inside loop\n";
+//        std::cout << "inside loop\n";
         memcpy(&next_buffer_size, &serialized_data[index],sizeof(uint32_t));
         // If next buffer is longer than remaining data in vector, an error has occured: break from loop.
-        std::cout << "length of next buffer is " << next_buffer_size;
-        if (next_buffer_size > serialized_data.size()-index) break;
+//        std::cout << "length of next buffer is " << next_buffer_size;
+        if (next_buffer_size > serialized_data.size()-index || next_buffer_size == 0) break;
         index += sizeof(uint32_t);
-        std::cout << "just before signal\n";
+//        std::cout << "just before signal\n";
         signal_new_buffer(&serialized_data[index], next_buffer_size);
-        std::cout << "just after signal\n";
+//        std::cout << "just after signal\n";
         index += next_buffer_size;
+    }
+}
+
+void serializer::deserialize_signal(uint8_t* data_ptr, uint32_t size)
+{
+    uint32_t next_buffer_size;
+    uint32_t index = 0;
+    while(index < size-1)
+    {
+    	memcpy(&next_buffer_size, data_ptr+index,sizeof(uint32_t));
+    	if (next_buffer_size > size-index || next_buffer_size == 0) break;
+    	index += sizeof(uint32_t);
+    	signal_new_buffer(data_ptr+index, next_buffer_size);
+    	index += next_buffer_size;
     }
 }
 
