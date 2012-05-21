@@ -62,11 +62,11 @@ void serializer::deserialize_signal(uint8_t* data_ptr, uint32_t size)
     uint32_t index = 0;
     while(index < size-1)
     {
-    	memcpy(&next_buffer_size, data_ptr+index,sizeof(uint32_t));
-    	if (next_buffer_size > size-index || next_buffer_size == 0) break;
-    	index += sizeof(uint32_t);
-    	signal_new_buffer(data_ptr+index, next_buffer_size);
-    	index += next_buffer_size;
+        memcpy(&next_buffer_size, data_ptr+index,sizeof(uint32_t));
+        if (next_buffer_size > size-index || next_buffer_size == 0) break;
+        index += sizeof(uint32_t);
+        signal_new_buffer(data_ptr+index, next_buffer_size);
+        index += next_buffer_size;
     }
 }
 
