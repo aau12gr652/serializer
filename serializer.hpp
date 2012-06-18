@@ -24,6 +24,8 @@ public:
     void deserialize_signal(uint8_t* data_ptr, uint32_t size);
     void reset(uint32_t capacity);
     uint32_t size();
+
+    unsigned int Iframes_Received, Pframes_Received, Iframes_Transmitted, Pframes_Transmitted;
 };
 
 #endif

@@ -2,6 +2,10 @@
 
 serializer::serializer(uint32_t size)
 {
+    Pframes_Received = 0;
+    Iframes_Received = 0;
+    Pframes_Transmitted = 0;
+    Iframes_Transmitted = 0;
     if (size) data.reserve(size);
 }
 
@@ -22,6 +26,10 @@ uint32_t serializer::feed(uint8_t *ptr, uint32_t size)
     memcpy(&size_array, &size, sizeof(uint32_t)); // BEWARE OF ENDIANESS!!!
 
     uint32_t index = data.size();
+	if (index)
+		Pframes_Transmitted++;
+    else
+	    Iframes_Transmitted++;
     data.insert(data.end(), size_array, size_array+sizeof(uint32_t));
 
     data.insert(data.end(), ptr, ptr+size);
@@ -48,6 +56,10 @@ void serializer::deserialize_signal(std::vector<uint8_t>& serialized_data)
         // If next buffer is longer than remaining data in vector, an error has occured: break from loop.
 //        std::cout << "length of next buffer is " << next_buffer_size;
         if (next_buffer_size > serialized_data.size()-index || next_buffer_size == 0) break;
+    	if (index)
+    		Pframes_Received++;
+    	else
+	    	Iframes_Received++;
         index += sizeof(uint32_t);
 //        std::cout << "just before signal\n";
         signal_new_buffer(&serialized_data[index], next_buffer_size);
@@ -64,6 +76,10 @@ void serializer::deserialize_signal(uint8_t* data_ptr, uint32_t size)
     {
         memcpy(&next_buffer_size, data_ptr+index,sizeof(uint32_t));
         if (next_buffer_size > size-index || next_buffer_size == 0) break;
+    	if (index)
+    		Pframes_Received++;
+    	else
+	    	Iframes_Received++;
         index += sizeof(uint32_t);
         signal_new_buffer(data_ptr+index, next_buffer_size);
         index += next_buffer_size;
