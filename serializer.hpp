@@ -25,7 +25,7 @@ public:
     void reset(uint32_t capacity);
     uint32_t size();
 
-    unsigned int Iframes_Received, Pframes_Received, Iframes_Transmitted, Pframes_Transmitted;
+    unsigned int Iframes, Pframes;// Iframes_Received, Pframes_Received, Iframes_Transmitted, Pframes_Transmitted;
 };
 
 #endif
