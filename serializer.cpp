@@ -51,7 +51,7 @@ void serializer::deserialize_signal(std::vector<uint8_t>& serialized_data)
     uint32_t index = 0;
     int frames = 0;
 
-    uint8_t tmp[8];
+/*    uint8_t tmp[8];
     memcpy(tmp, &serialized_data[index], 8);
     for (int n = 0; n < 8; n++)
     {
@@ -65,13 +65,13 @@ void serializer::deserialize_signal(std::vector<uint8_t>& serialized_data)
 				std::cout << ".";
 		}
 	}
-	std::cout << std::endl;
+	std::cout << std::endl; */
     while(index < serialized_data.size()-1)
     {
 //        std::cout << "inside loop\n";
         memcpy(&next_buffer_size, &serialized_data[index],sizeof(uint32_t));
         // If next buffer is longer than remaining data in vector, an error has occured: break from loop.
-        std::cout << "length of " << frames << " buffer is " << next_buffer_size << std::endl;
+//        std::cout << "length of " << frames << " buffer is " << next_buffer_size << std::endl;
         if (next_buffer_size > serialized_data.size()-index)
         {
         	std::cout << "Out of bounds. Size: " << serialized_data.size()*1 << " index: " << index*1 << " Adr: " << (long)(&serialized_data[0]) << std::endl;
@@ -79,7 +79,7 @@ void serializer::deserialize_signal(std::vector<uint8_t>& serialized_data)
         }
         if ( next_buffer_size == 0 )
         {
-        	std::cout << "Zero-padded. Size: " << serialized_data.size()*1 << " index: " << index*1 << " Adr: " << (long)(&serialized_data[0]) << std::endl;
+//        	std::cout << "Zero-padded. Size: " << serialized_data.size()*1 << " index: " << index*1 << " Adr: " << (long)(&serialized_data[0]) << std::endl;
             break;
         }
         frames++;
